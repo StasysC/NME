@@ -1,5 +1,7 @@
-package controller;
 
+
+import controller.RoomServiceController;
+import model.RoomsData;
 import view.MenuView;
 
 public class Application {
@@ -10,7 +12,10 @@ public class Application {
 
     void runProgram() {
         MenuView menu = new MenuView();
+        //RoomsData roomsData = new RoomsData();
         RoomServiceController roomService = new RoomServiceController();
+        //roomsData.initRooms();
+
         do {
             menu.menuOptions();
             roomService.roomServices();

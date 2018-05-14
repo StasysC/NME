@@ -4,24 +4,24 @@ import com.sun.javafx.collections.MappingChange;
 import model.RoomsData;
 import view.MenuView;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class RoomServiceController {
     RoomsData _roomsData = new RoomsData();
     MenuView _menuView = new MenuView();
+    // RoomsData _roomsData ;
+    //MenuView _menuView;
+
     Scanner _scannerInput = new Scanner(System.in);
     InputController _input = new InputController();
 
     public void roomServices() {
-        // connections();
         int inputInt = _input.correctInputForService(_scannerInput);
         chooseOption(inputInt, _scannerInput);
     }
 
-    /*  private void connections() {
-          _roomsData = new RoomsData();
-      }
-  */
     private void chooseOption(int correctInput, Scanner scannerInput) {
 
         switch (correctInput) {
@@ -56,39 +56,20 @@ public class RoomServiceController {
     }
 
     private void guestCheckIn(Scanner input) {
-        int freeRoomNumber = Integer.parseInt(_roomsData.freeRooms().get(0));
-        if (freeRoomNumber == 0) {
+        List<Integer> freeRoomNumbers = _roomsData.freeRooms();
+        if (freeRoomNumbers == null) {
             _menuView.ui(2);
             return;
         }
+        int selectedFreeRoomNumber = freeRoomNumbers.get(0);
         List<String> guestForCheckIn = createGuest();
-        _roomsData.addGuestToRoom(guestForCheckIn, freeRoomNumber);
-       /* for (String i : _roomsData.freeRooms()) {
-            System.out.println(i);
-        }
-   /*     for (Map.Entry<String, String> guest : _guest.entrySet()) {
-            System.out.println(guest);
-        }*/
+        _roomsData.addGuestToRoom(guestForCheckIn, selectedFreeRoomNumber);
     }
 
 
     private void guestCheckOut() {
         List<String> guestForCheckOut = createGuest();
-        if (_roomsData.getRoomNum1().containsAll(guestForCheckOut)) {
-            _roomsData.setRoomNum1(null);
-        }
-        if (_roomsData.getRoomNum2().containsAll(guestForCheckOut)) {
-            _roomsData.setRoomNum2(null);
-        }
-        if (_roomsData.getRoomNum3().containsAll(guestForCheckOut)) {
-            _roomsData.setRoomNum3(null);
-        }
-        if (_roomsData.getRoomNum4().containsAll(guestForCheckOut)) {
-            _roomsData.setRoomNum4(null);
-        }
-        if (_roomsData.getRoomNum5().containsAll(guestForCheckOut)) {
-            _roomsData.setRoomNum5(null);
-        }
+        _roomsData.removeGuestFroRoom(guestForCheckOut);
         System.out.println("Guest has been checked out");
     }
 
@@ -102,11 +83,17 @@ public class RoomServiceController {
 
     private void roomStatus() {
 
-        System.out.println("Room 1: " + _roomsData.getRoomNum1());
-        System.out.println("Room 2: " + _roomsData.getRoomNum2());
-        System.out.println("Room 3: " + _roomsData.getRoomNum3());
-        System.out.println("Room 4: " + _roomsData.getRoomNum4());
-        System.out.println("Room 5: " + _roomsData.getRoomNum5());
+        System.out.println("Free rooms: ");
+        //   Map<Integer,List<String>> z = _roomsData.getRooms();
+        //  List<Integer> s = _roomsData.freeRooms();
+        if (_roomsData.freeRooms() == null) {
+
+        } else {
+            for (Map.Entry<Integer, List<String>> i : _roomsData._rooms.entrySet()) {
+                System.out.println("Room " + i);
+            }
+
+        }
     }
 
 
