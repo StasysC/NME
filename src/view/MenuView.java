@@ -36,7 +36,7 @@ public class MenuView {
                 System.out.println("\nWrong guest name and surname. Please try again.");
                 break;
              case 7:
-                System.out.println("\nRooms history:");
+                System.out.println("\nGuest successfuly checked in");
                 break;
         }
     }

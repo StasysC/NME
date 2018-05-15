@@ -4,18 +4,24 @@ import controller.RoomServiceController;
 import model.RoomsData;
 import view.MenuView;
 
-public class Application {
+public class TaskApplication {
     public static void main(String[] args) {
-        Application obj = new Application();
+        TaskApplication obj = new TaskApplication();
         obj.runProgram();
     }
+
 
     void runProgram() {
         MenuView menu = new MenuView();
         RoomServiceController roomService = new RoomServiceController();
+        RoomsData roomsData = roomService.getRoomsData();
+        roomsData.readDataFile();
+        boolean runAgain ;
         do {
             menu.menuOptions();
             roomService.roomServices();
-        } while (true);
+            runAgain = roomService.isRunProgram();
+        } while (runAgain);
+        roomsData.createDataFile();
     }
 }

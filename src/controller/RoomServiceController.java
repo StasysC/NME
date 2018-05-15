@@ -3,18 +3,32 @@ package controller;
 import model.RoomsData;
 import view.MenuView;
 
-import java.util.*;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 public class RoomServiceController {
+
+
+    boolean _runProgram = true;
+
+
     RoomsData _roomsData = new RoomsData();
     MenuView _menuView = new MenuView();
     Scanner _scannerInput = new Scanner(System.in);
     InputController _input = new InputController();
 
+    public RoomsData getRoomsData() {
+        return _roomsData;
+    }
+
+    public boolean isRunProgram() {
+        return _runProgram;
+    }
+
     public void roomServices() {
         int inputInt = _input.inputForServiceOptions(_scannerInput);
-
         chooseOption(inputInt, _scannerInput);
     }
 
@@ -23,7 +37,8 @@ public class RoomServiceController {
         switch (correctInput) {
 
             case 0:
-                System.exit(0);
+                _runProgram = false;
+                break;
             case 1:
                 guestCheckIn(scannerInput);
                 break;
@@ -61,6 +76,7 @@ public class RoomServiceController {
         List<String> guestForCheckIn = createGuest();
         _roomsData.addGuestToRoom(guestForCheckIn, selectedFreeRoomNumber);
         createHistoryRecord(selectedFreeRoomNumber, guestForCheckIn);
+        _menuView.ui(7);
     }
 
     private void createHistoryRecord(int roomNum, List<String> guest) {
