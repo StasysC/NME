@@ -1,24 +1,20 @@
 package controller;
 
-import com.sun.javafx.collections.MappingChange;
 import model.RoomsData;
 import view.MenuView;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 
 public class RoomServiceController {
     RoomsData _roomsData = new RoomsData();
     MenuView _menuView = new MenuView();
-    // RoomsData _roomsData ;
-    //MenuView _menuView;
-
     Scanner _scannerInput = new Scanner(System.in);
     InputController _input = new InputController();
 
     public void roomServices() {
-        int inputInt = _input.correctInputForService(_scannerInput);
+        int inputInt = _input.inputForServiceOptions(_scannerInput);
+
         chooseOption(inputInt, _scannerInput);
     }
 
@@ -35,10 +31,10 @@ public class RoomServiceController {
                 guestCheckOut();
                 break;
             case 3:
-                roomAvailability();
+                checkOccupiedRooms();
                 break;
             case 4:
-                roomStatus();
+                roomHistory();
                 break;
         }
     }
@@ -48,9 +44,9 @@ public class RoomServiceController {
         String guestName;
         String guestSurname;
         _menuView.ui(0);
-        guestName = _input.correctInputForRegistration(_scannerInput);
+        guestName = _input.inputForGuest(_scannerInput);
         _menuView.ui(1);
-        guestSurname = _input.correctInputForRegistration(_scannerInput);
+        guestSurname = _input.inputForGuest(_scannerInput);
         guest.add(guestName + " " + guestSurname);
         return guest;
     }
@@ -64,35 +60,51 @@ public class RoomServiceController {
         int selectedFreeRoomNumber = freeRoomNumbers.get(0);
         List<String> guestForCheckIn = createGuest();
         _roomsData.addGuestToRoom(guestForCheckIn, selectedFreeRoomNumber);
+        createHistoryRecord(selectedFreeRoomNumber, guestForCheckIn);
     }
 
+    private void createHistoryRecord(int roomNum, List<String> guest) {
+
+        List<String> oldGuest = _roomsData.getRoomHistory().get(roomNum);
+        if (oldGuest == null) {
+            oldGuest = new LinkedList<>(guest);
+        } else {
+            oldGuest.addAll(guest);
+        }
+        _roomsData.setRoomHistory(roomNum, oldGuest);
+    }
 
     private void guestCheckOut() {
         List<String> guestForCheckOut = createGuest();
-        _roomsData.removeGuestFroRoom(guestForCheckOut);
-        System.out.println("Guest has been checked out");
-    }
-
-    private void roomAvailability() {
-        System.out.println("Room availability");
-    }
-
-    private void roomHistory(int roomNumber) {
-        System.out.println("Room history");
-    }
-
-    private void roomStatus() {
-
-        System.out.println("Free rooms: ");
-        //   Map<Integer,List<String>> z = _roomsData.getRooms();
-        //  List<Integer> s = _roomsData.freeRooms();
-        if (_roomsData.freeRooms() == null) {
-
+        boolean guestRemoved = _roomsData.removeGuestFromRoom(guestForCheckOut);
+        if (guestRemoved) {
+            _menuView.ui(3);
         } else {
-            for (Map.Entry<Integer, List<String>> i : _roomsData._rooms.entrySet()) {
-                System.out.println("Room " + i);
-            }
+            _menuView.ui(4);
+        }
+    }
 
+    private void checkOccupiedRooms() {
+        for (Map.Entry<Integer, List<String>> i : _roomsData.getRooms().entrySet()) {
+            if (i.getValue() != null) {
+                System.out.println("Room: " + i.getKey() + " Guest: " + i.getValue());
+            }
+        }
+    }
+
+    private void roomHistory() {
+        _menuView.ui(5);
+        int selectedRoomInput = _input.inputForRoomHistory(_scannerInput);
+        Map<Integer, List<String>> roomsHistory = _roomsData.getRoomHistory();
+        System.out.println("Room: " + selectedRoomInput + " Guests history: " + roomsHistory.get(selectedRoomInput));
+        roomStatus(selectedRoomInput);
+    }
+
+    private void roomStatus(int selectedRoom) {
+        if (_roomsData.getRooms().get(selectedRoom) != null) {
+            System.out.println("Room " + selectedRoom + " - Occupied");
+        } else {
+            System.out.println("Room " + selectedRoom + " - Free");
         }
     }
 
